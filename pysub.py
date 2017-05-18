@@ -37,28 +37,33 @@ def nouvelle_asso():
     dem = float(input("Montant de la demande: "))
     asso = Assos(nom, nbadh, adh, tres, sal, loc, sub, dem)
     try:
-        fichAssos = open("assos", 'ab')
-        listAssos = pickle.load(fichAssos)
+        fichAssos = open("assos", 'rb')        
+        listAssos = pickle.load(fichAssos)        
         listAssos.append(asso)
-        pickle.dump(listAssos, fichAssos)
         fichAssos.close()
+        fichAssos = open("assos", 'wb')
+        
     except:
         fichAssos = open("assos", 'wb')
-        listAssos = [asso]
-        pickle.dump(listAssos, fichAssos)
-        fichAssos.close()
+        listAssos = [asso]        
+    pickle.dump(listAssos, fichAssos)
+    fichAssos.close()
+        
         
 def coef():
-    fichAssos = open("assos", 'rb')
-    listAssos = pickle.load(fichAssos)
-    fichAssos.close()
-    dic = {}
-    total = 0
-    for asso in listAssos:
-        dic[asso.nom] = asso.nbadh +asso.adh +asso.tres +asso.sal +asso.loc +asso.sub +asso.dem
-        total += dic[asso.nom]
-    for k in dic:
-        print(k, dic[k]/(total/100),"%")
+    try:
+        fichAssos = open("assos", 'rb')
+        listAssos = pickle.load(fichAssos)
+        fichAssos.close()
+        dic = {}
+        total = 0
+        for asso in listAssos:
+            dic[asso.nom] = asso.nbadh +asso.adh +asso.tres +asso.sal -asso.loc -asso.sub +asso.dem
+            total += dic[asso.nom]
+        for k in dic:
+            print(k, dic[k]/(total/100),"%")
+    except:
+        print("Aucune associations dans le fichier")
     
 choix = ""
 while choix != "q":
