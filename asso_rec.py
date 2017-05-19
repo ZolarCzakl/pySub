@@ -28,29 +28,7 @@ class Assos:
         self.dem = dem
 
 
-def nouvelle_asso():
-    nom = input("Nom de l'association: ")
-    nbadh = int(input("Nombre d'adhérants: "))
-    adh = float(input("Montant de l'adhésion: "))
-    tres = float(input("Montant de la trésorerie: "))
-    sal = int(input("Nombre de salarié: "))
-    loc = int(input("Occupation des salles: "))
-    sub = float(input("Subventions extérieures: "))
-    dem = float(input("Montant de la demande: "))
-    asso = Assos(nom, nbadh, adh, tres, sal, loc, sub, dem)
-    try:
-        fichAssos = open("assos", 'rb')        
-        listAssos = pickle.load(fichAssos)        
-        listAssos.append(asso)
-        fichAssos.close()
-        fichAssos = open("assos", 'wb')
-        
-    except:
-        fichAssos = open("assos", 'wb')
-        listAssos = [asso]        
-    pickle.dump(listAssos, fichAssos)
-    fichAssos.close()
-        
+
         
 def coef():
     """ 
@@ -70,11 +48,4 @@ def coef():
     except:
         print("Aucune associations dans le fichier")
     
-choix = ""
-while choix != "q":
-    choix = input("Entrez 'o' pour ajouter une nouvelle association, 'c' pour les coef et 'q' pour quitter.")
-    if choix == "o":
-        nouvelle_asso()
-    elif choix == "c":
-        coef()
-    
+
