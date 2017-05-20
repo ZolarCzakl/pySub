@@ -120,7 +120,7 @@ def coef():
         try:
             sub = float(entr9.get())
             for asso in listAssos:
-                dic[asso.nom] = asso.nbadh +asso.adh +asso.tres +asso.sal -asso.loc -asso.sub +asso.dem
+                dic[asso.nom] = asso.nbadh*adherent.get() +asso.adh*adhesion.get() +asso.tres*tresorerie.get() +asso.sal*salarie.get() -asso.loc*salle.get() -asso.sub*subvention.get() +asso.dem
                 total += dic[asso.nom]
             for k in dic:
                 pourcent = dic[k]/(total/100)
@@ -171,16 +171,23 @@ confirm = Label(fen)
 confirm.grid(row = 11)
 liste = Label(fen)
 liste.grid(row = 11, column = 1)
-Scale(fen, length=250, orient=HORIZONTAL, label="Adhérents", sliderlength=20, showvalue=0,
-      from_=-10, to=10, tickinterval=1).grid(row = 12)
-Scale(fen, length=250, orient=HORIZONTAL, label="Adhésion", sliderlength=20, showvalue=0,
-      from_=-10, to=10, tickinterval=1).grid(row = 12, column = 1)
-Scale(fen, length=250, orient=HORIZONTAL, label="Trésorerie", sliderlength=20, showvalue=0,
-      from_=-10, to=10, tickinterval=1).grid(row = 12, column = 2)
-Scale(fen, length=250, orient=HORIZONTAL, label="Salarié(es)", sliderlength=20, showvalue=0,
-      from_=-10, to=10, tickinterval=1).grid(row = 13)
-Scale(fen, length=250, orient=HORIZONTAL, label="Occupation de salle", sliderlength=20, showvalue=0, from_=-10, to=10, tickinterval=1).grid(row = 13, column = 1)
-Scale(fen, length=250, orient=HORIZONTAL, label="Subventions ext", sliderlength=20, showvalue=0, from_=-10, to=10, tickinterval=1).grid(row = 13, column = 2)
+adherent = Scale(fen, length=250, orient=HORIZONTAL, label="Adhérents",
+                 sliderlength=20, showvalue=0, from_=-10, to=10, tickinterval=1)
+adherent.grid(row = 12)
+adhesion = Scale(fen, length=250, orient=HORIZONTAL, label="Adhésion",
+                 sliderlength=20, showvalue=0, from_=-10, to=10, tickinterval=1)
+adhesion.grid(row = 12, column = 1)
+tresorerie = Scale(fen, length=250, orient=HORIZONTAL, label="Trésorerie",
+                   sliderlength=20, showvalue=0, from_=-10, to=10, tickinterval=1)
+tresorerie.grid(row = 12, column = 2)
+salarie = Scale(fen, length=250, orient=HORIZONTAL, label="Salarié(es)",
+                sliderlength=20, showvalue=0, from_=-10, to=10, tickinterval=1)
+salarie.grid(row = 13)
+salle = Scale(fen, length=250, orient=HORIZONTAL, label="Occupation de salle",
+              sliderlength=20, showvalue=0, from_=-10, to=10, tickinterval=1)
+salle.grid(row = 13, column = 1)
+subvention = Scale(fen, length=250, orient=HORIZONTAL, label="Subventions ext", sliderlength=20, showvalue=0, from_=-10, to=10, tickinterval=1)
+subvention.grid(row = 13, column = 2)
 
 fen.mainloop()
 
