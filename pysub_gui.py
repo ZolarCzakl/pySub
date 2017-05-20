@@ -125,7 +125,7 @@ def coef():
             for k in dic:
                 pourcent = dic[k]/(total/100)
                 assob = sub/100*pourcent
-                contenu += k + " " + str(pourcent) + "% = " + str(assob) + "€\n"
+                contenu += k + " " + str(round(pourcent, 2)) + "% = " + str(round(assob, 2)) + "€\n"
             liste.configure(text = contenu)
             confirm.configure(text = "Résultat: ")
         except:
@@ -134,6 +134,7 @@ def coef():
         confirm.configure(text = "Aucune associations dans le fichier")
 
 fen = Tk()
+fen.title("Aide à la répartition des subventions")
 
 Label(fen, text = "Association: ").grid(row = 0, sticky = W)
 Label(fen, text = "Nombre d'adhérents: ").grid(row = 1, sticky = W)
@@ -144,24 +145,24 @@ Label(fen, text = "Occupation des salles: ").grid(row = 5, sticky = W)
 Label(fen, text = "Subventions extérieures: ").grid(row = 6, sticky = W)
 Label(fen, text = "Montant de la demande: ").grid(row = 7, sticky = W)
 Label(fen, text = "Montant total à répartir").grid(row = 9, sticky = W)
-entr1 = Entry(fen)
-entr2 = Entry(fen)
-entr3 = Entry(fen)
-entr4 = Entry(fen)
-entr5 = Entry(fen)
-entr6 = Entry(fen)
-entr7 = Entry(fen)
-entr8 = Entry(fen)
-entr9 = Entry(fen)
-entr1.grid(row = 0, column = 1, columnspan = 2)
-entr2.grid(row = 1, column = 1, columnspan = 2)
-entr3.grid(row = 2, column = 1, columnspan = 2)
-entr4.grid(row = 3, column = 1, columnspan = 2)
-entr5.grid(row = 4, column = 1, columnspan = 2)
-entr6.grid(row = 5, column = 1, columnspan = 2)
-entr7.grid(row = 6, column = 1, columnspan = 2)
-entr8.grid(row = 7, column = 1, columnspan = 2)
-entr9.grid(row = 9, column = 1, columnspan = 2)
+entr1 = Entry(fen, width=30)
+entr2 = Entry(fen, width=30)
+entr3 = Entry(fen, width=30)
+entr4 = Entry(fen, width=30)
+entr5 = Entry(fen, width=30)
+entr6 = Entry(fen, width=30)
+entr7 = Entry(fen, width=30)
+entr8 = Entry(fen, width=30)
+entr9 = Entry(fen, width=30)
+entr1.grid(row = 0, column = 1)
+entr2.grid(row = 1, column = 1)
+entr3.grid(row = 2, column = 1)
+entr4.grid(row = 3, column = 1)
+entr5.grid(row = 4, column = 1)
+entr6.grid(row = 5, column = 1)
+entr7.grid(row = 6, column = 1)
+entr8.grid(row = 7, column = 1)
+entr9.grid(row = 9, column = 1)
 Button(fen, text = "Enregistrer", command = nouvelle_asso).grid(row = 8, sticky = W)
 Button(fen, text = "Nouveau", command = vidage).grid(row = 8, column = 1, sticky = W)
 Button(fen, text = "Listing", command = listing).grid(row = 8, column = 2, sticky = W)
@@ -170,4 +171,16 @@ confirm = Label(fen)
 confirm.grid(row = 11)
 liste = Label(fen)
 liste.grid(row = 11, column = 1)
+Scale(fen, length=250, orient=HORIZONTAL, label="Adhérents", sliderlength=20, showvalue=0,
+      from_=-10, to=10, tickinterval=1).grid(row = 12)
+Scale(fen, length=250, orient=HORIZONTAL, label="Adhésion", sliderlength=20, showvalue=0,
+      from_=-10, to=10, tickinterval=1).grid(row = 12, column = 1)
+Scale(fen, length=250, orient=HORIZONTAL, label="Trésorerie", sliderlength=20, showvalue=0,
+      from_=-10, to=10, tickinterval=1).grid(row = 12, column = 2)
+Scale(fen, length=250, orient=HORIZONTAL, label="Salarié(es)", sliderlength=20, showvalue=0,
+      from_=-10, to=10, tickinterval=1).grid(row = 13)
+Scale(fen, length=250, orient=HORIZONTAL, label="Occupation de salle", sliderlength=20, showvalue=0, from_=-10, to=10, tickinterval=1).grid(row = 13, column = 1)
+Scale(fen, length=250, orient=HORIZONTAL, label="Subventions ext", sliderlength=20, showvalue=0, from_=-10, to=10, tickinterval=1).grid(row = 13, column = 2)
+
 fen.mainloop()
+
