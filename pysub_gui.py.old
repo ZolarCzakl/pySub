@@ -4,27 +4,45 @@ Aide au calcul de la répartition des subventions de la mairie pour les associat
 @auteur: Rod <rod.cat@free.fr>  License libre
 """
 
+
+
+
 from tkinter import *
 import pickle
 
 
-def verif(dic, nom):
+class Assos:
+    def __init__(self, nom, nbadh, adh, tres, sal, loc, sub, dem):
+        """
+        Initialisation des valeurs liées aux associations:
+        nom, nombre d'adhérents (nbadh), montant de l'adhésion (adh), trésorerie (tres),
+        nombre de salariés (sal), occupation de locaux (loc), subventions extérieures (sub),
+        montant de la demande (dem)
+        """
+        self.nom = nom
+        self.nbadh = nbadh
+        self.adh = adh
+        self.tres = tres
+        self.sal = sal
+        self.loc = loc
+        self.sub =sub
+        self.dem = dem
+
+def verif(liste, nom):
     """
     Vérifie la présence d'une association dans le fichier.
     """
-    if nom in dic:
-        vrai = 1
-    else:
-        vrai = 0
+    for asso in liste:
+        if asso.nom == nom:
+            vrai = 1
+            break
+        else:
+            vrai = 0
     return vrai
 
 def nouvelle_asso():
     """
     Ajoute une nouvelle association au fichier.
-    Initialisation des valeurs liées aux associations:
-    nom, nombre d'adhérents (nbadh), montant de l'adhésion (adh), trésorerie (tres),
-    nombre de salariés (sal), occupation de locaux (loc), subventions extérieures (sub),
-    montant de la demande (dem)
     """
     nom = (entr1.get()).lower()
     nbadh = int(entr2.get())
@@ -34,6 +52,7 @@ def nouvelle_asso():
     loc = int(entr6.get())
     sub = float(entr7.get())
     dem = float(entr8.get())
+    asso = Assos(nom, nbadh, adh, tres, sal, loc, sub, dem)
     try:
         fichAssos = open("assos", 'rb')
         listAssos = pickle.load(fichAssos)
@@ -41,19 +60,18 @@ def nouvelle_asso():
         if verif(listAssos, nom):
             confirm.configure(text = "L'association " + nom + " est déjà enregistrée")
         else:
-            listAssos[nom] = [nbadh, adh, tres, sal, loc, sub, dem]
+            listAssos.append(asso)
             fichAssos = open("assos", 'wb')
             pickle.dump(listAssos, fichAssos)
             fichAssos.close()
-            confirm.configure(text = "L'association " + nom + " est bien enregistrée")
+            confirm.configure(text = "L'association " + asso.nom + " est bien enregistrée")
         
     except:
-        listAssos = {}
         fichAssos = open("assos", 'wb')
-        listAssos[nom] = [nbadh, adh, tres, sal, loc, sub, dem]
+        listAssos = [asso]
         pickle.dump(listAssos, fichAssos)
         fichAssos.close()
-        confirm.configure(text = "L'association " + nom + " est bien enregistrée")
+        confirm.configure(text = "L'association " + asso.nom + " est bien enregistrée")
     
 def listing():
     """
@@ -65,7 +83,7 @@ def listing():
         fichAssos.close()
         contenu = ""
         for asso in listAssos:
-            contenu += asso + ", " + str(listAssos[asso][0]) + " adhérents" + "\n"
+            contenu += asso.nom + ", " + str(asso.nbadh) + " adhérents" + "\n"
         liste.configure(text = contenu)
             
         
@@ -101,9 +119,9 @@ def coef():
         contenu = ""
         try:
             sub = float(entr9.get())
-            for asso, val in listAssos.items():
-                dic[asso] = val[0]*adherent.get() + val[1]*adhesion.get() + val[2]*tresorerie.get() + val[3]*salarie.get() - val[4]*salle.get() -val[5]*subvention.get() + val[6]
-                total += dic[asso]
+            for asso in listAssos:
+                dic[asso.nom] = asso.nbadh*adherent.get() +asso.adh*adhesion.get() +asso.tres*tresorerie.get() +asso.sal*salarie.get() -asso.loc*salle.get() -asso.sub*subvention.get() +asso.dem
+                total += dic[asso.nom]
             for k in dic:
                 pourcent = dic[k]/(total/100)
                 assob = sub/100*pourcent
@@ -114,7 +132,6 @@ def coef():
             confirm.configure(text = "Entrez une somme à répartir")
     except:
         confirm.configure(text = "Aucune associations dans le fichier")
-
 
 fen = Tk()
 fen.title("Aide à la répartition des subventions")
