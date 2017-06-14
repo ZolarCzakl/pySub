@@ -10,16 +10,6 @@ from tkinter import ttk
 import pickle
 
 
-def verif(dic, nom):
-    """
-    Vérifie la présence d'une association dans le fichier.
-    """
-    if nom in dic:
-        vrai = 1
-    else:
-        vrai = 0
-    return vrai
-
 def nouvelle_asso():
     """
     Ajoute une nouvelle association au fichier.
@@ -41,26 +31,22 @@ def nouvelle_asso():
         fichAssos = open("assos", 'rb')
         listAssos = pickle.load(fichAssos)
         fichAssos.close()
-        if verif(listAssos, nom):
-            confirm.configure(text = "L'association "
-                              + nom + " est déjà enregistrée")
+        if nom in listAssos:
+            confirm.set("L'association " + nom + " est déjà enregistrée")       
         else:
             listAssos[nom] = [nbadh, adh, tres, sal, loc, sub, dem]
             fichAssos = open("assos", 'wb')
             pickle.dump(listAssos, fichAssos)
             fichAssos.close()
-            confirm.configure(text = "L'association "
-                              + nom + " est bien enregistrée")
-        
+            confirm.set("L'association " + nom + " est bien enregistrée")       
     except:
         listAssos = {}
         fichAssos = open("assos", 'wb')
         listAssos[nom] = [nbadh, adh, tres, sal, loc, sub, dem]
         pickle.dump(listAssos, fichAssos)
         fichAssos.close()
-        confirm.configure(text = "L'association "
-                          + nom + " est bien enregistrée")
-    
+        confirm.set("L'association " + nom + " est bien enregistrée")
+        
 def listing():
     """
     liste les associations déjà enregistrées.
@@ -69,16 +55,12 @@ def listing():
         fichAssos = open("assos", 'rb')        
         listAssos = pickle.load(fichAssos)        
         fichAssos.close()
-        contenu = ""
-        for asso in listAssos:
-            contenu += asso + ", " + str(listAssos[asso][0])
-            + " adhérents" + "\n"
-        liste.configure(text = contenu)
-            
-        
-        
+        cont = ""
+        for asso in listAssos:            
+            cont += asso + ", " + str(listAssos[asso][0]) + " adhérents" + "\n" 
+        liste.set(cont)                
     except:
-        liste.configure(text = "Fichier vide")
+        liste.set("Fichier vide")
     
     
 def vidage():
@@ -105,43 +87,53 @@ def coef():
         fichAssos.close()        
         dic = {}
         total = 0
-        contenu = ""
+        cont = ""        
         try:
-            sub = float(entr9.get())
-            for asso, val in listAssos.items():
-                dic[asso] = val[0]*adherent.get()
+            sub = float(entr9.get())            
+            for asso, val in listAssos.items():                
+                dic[asso] = (val[0]*adherent.get()
                 + val[1]*adhesion.get()
                 + val[2]*tresorerie.get()
                 + val[3]*salarie.get()
                 - val[4]*salle.get()
                 -val[5]*subvention.get()
-                + val[6]
-                total += dic[asso]
-            for k in dic:
-                pourcent = dic[k]/(total/100)
-                assob = sub/100*pourcent
-                contenu += k + " " + str(round(pourcent, 2))
-                + "% = " + str(round(assob, 2)) + "€\n"
-            liste.configure(text = contenu)
-            confirm.configure(text = "Résultat: ")
+                + val[6])                
+                total += dic[asso]                
+            for k in dic:                
+                pourcent = dic[k]/(total/100)                
+                assob = sub/100*pourcent                
+                cont += (k+" "+str(round(pourcent, 2))+"% = "
+                +str(round(assob, 2))+"€\n")                
+            liste.set(cont)            
+            confirm.set("Résultat: ")            
         except:
-            confirm.configure(text = "Entrez une somme à répartir")
+            confirm.set("Entrez une somme à répartir")
     except:
-        confirm.configure(text = "Aucune associations dans le fichier")
+        confirm.set("Aucune associations dans le fichier")
 
 
-fen = Tk()
-fen.title("Aide à la répartition des subventions")
+root = Tk()
+root.title("Aide à la répartition des subventions")
 
-ttk.Label(fen, text = "Association: ").grid(row = 0, sticky = W)
-ttk.Label(fen, text = "Nombre d'adhérents: ").grid(row = 1, sticky = W)
-ttk.Label(fen, text = "Montant de l'adhésion: ").grid(row = 2, sticky = W)
-ttk.Label(fen, text = "Trésorerie: ").grid(row = 3, sticky = W)
-ttk.Label(fen, text = "Salarié(es): ").grid(row = 4, sticky = W)
-ttk.Label(fen, text = "Occupation des salles: ").grid(row = 5, sticky = W)
-ttk.Label(fen, text = "Subventions extérieures: ").grid(row = 6, sticky = W)
-ttk.Label(fen, text = "Montant de la demande: ").grid(row = 7, sticky = W)
-ttk.Label(fen, text = "Montant total à répartir").grid(row = 9, sticky = W)
+fen = ttk.Frame(root, padding=10)
+fen.grid(column=0, row=0, sticky=(E,W))
+message = ttk.Frame(root, padding=10)
+message.grid(column=0, row=12, sticky=(E,W))
+scale = ttk.Frame(root, padding=10)
+scale.grid(column=0, row=20, rowspan=3)
+
+confirm = StringVar()
+liste = StringVar()
+
+ttk.Label(fen, text="Association: ").grid(row=0, sticky=W)
+ttk.Label(fen, text="Nombre d'adhérents: ").grid(row=1, sticky=W)
+ttk.Label(fen, text="Montant de l'adhésion: ").grid(row=2, sticky=W)
+ttk.Label(fen, text="Trésorerie: ").grid(row=3, sticky=W)
+ttk.Label(fen, text="Salarié(es): ").grid(row=4, sticky=W)
+ttk.Label(fen, text="Occupation des salles: ").grid(row=5, sticky=W)
+ttk.Label(fen, text="Subventions extérieures: ").grid(row=6, sticky=W)
+ttk.Label(fen, text="Montant de la demande: ").grid(row=7, sticky=W)
+ttk.Label(fen, text="Montant total à répartir").grid(row=9, sticky=W)
 entr1 = ttk.Entry(fen, width=30)
 entr2 = ttk.Entry(fen, width=30)
 entr3 = ttk.Entry(fen, width=30)
@@ -160,44 +152,48 @@ entr6.grid(row = 5, column = 1)
 entr7.grid(row = 6, column = 1)
 entr8.grid(row = 7, column = 1)
 entr9.grid(row = 9, column = 1)
-ttk.Button(fen, text = "Enregistrer", command = nouvelle_asso).grid(row = 8,
-                                                                sticky = W)
-ttk.Button(fen, text = "Nouveau", command = vidage).grid(row = 8, column = 1,
-                                                     sticky = W)
-ttk.Button(fen, text = "Listing", command = listing).grid(row = 8, column = 2
-                                                      , sticky = W)
-ttk.Button(fen, text = "Calcul", command = coef).grid(row = 10, sticky = W)
-confirm = ttk.Label(fen)
-confirm.grid(row = 11)
-liste = ttk.Label(fen)
-liste.grid(row = 11, column = 1)
+ttk.Button(fen, text="Enregistrer", command=nouvelle_asso).grid(row=8, sticky=W)
+ttk.Button(fen, text="Nouveau", command=vidage).grid(row=8, column=1, sticky=W)
+ttk.Button(fen, text="Listing", command=listing).grid(row=8, column=2, sticky=W)
+ttk.Button(fen, text="Calcul", command=coef).grid(row=10, sticky=W)
+ttk.Label(message, textvariable=confirm).grid(column=0, row=11, sticky=W)
+ttk.Label(message, textvariable=liste).grid(column=1, row=11, sticky=W)
 
 
 
-adherent = Scale(fen, length=250, orient=HORIZONTAL, label="Adhérents",
-                 sliderlength=20, showvalue=0, from_=-10,
+adherent = Scale(scale, length=250, orient=HORIZONTAL, label="Adhérents",
+                 sliderlength=20, showvalue=1, from_=-10,
                  to=10, tickinterval=1)
-adherent.grid(row = 12)
-adhesion = Scale(fen, length=250, orient=HORIZONTAL, label="Adhésion",
-                 sliderlength=20, showvalue=0, from_=-10, to=10,
+adherent.grid(row = 15)
+adhesion = Scale(scale, length=250, orient=HORIZONTAL, label="Adhésion",
+                 sliderlength=20, showvalue=1, from_=-10, to=10,
                  tickinterval=1)
-adhesion.grid(row = 12, column = 1)
-tresorerie = Scale(fen, length=250, orient=HORIZONTAL, label="Trésorerie",
-                 sliderlength=20, showvalue=0, from_=-10, to=10,
+adhesion.grid(row = 15, column = 1)
+tresorerie = Scale(scale, length=250, orient=HORIZONTAL, label="Trésorerie",
+                 sliderlength=20, showvalue=1, from_=-10, to=10,
                  tickinterval=1)
-tresorerie.grid(row = 12, column = 2)
-salarie = Scale(fen, length=250, orient=HORIZONTAL, label="Salarié(es)",
-                 sliderlength=20, showvalue=0, from_=-10, to=10,
+tresorerie.grid(row = 15, column = 2)
+salarie = Scale(scale, length=250, orient=HORIZONTAL, label="Salarié(es)",
+                 sliderlength=20, showvalue=1, from_=-10, to=10,
                  tickinterval=1)
-salarie.grid(row = 13)
-salle = Scale(fen, length=250, orient=HORIZONTAL, label="Occupation de salle",
-                 sliderlength=20, showvalue=0, from_=-10, to=10,
+salarie.grid(row = 16)
+salle = Scale(scale, length=250, orient=HORIZONTAL, label="Occupation de salle",
+                 sliderlength=20, showvalue=1, from_=-10, to=10,
                  tickinterval=1)
-salle.grid(row = 13, column = 1)
-subvention = Scale(fen, length=250, orient=HORIZONTAL, label="Subventions ext",
-                 sliderlength=20, showvalue=0, from_=-10, to=10,
+salle.grid(row = 16, column = 1)
+subvention = Scale(scale, length=250, orient=HORIZONTAL, label="Sub ext",
+                 sliderlength=20, showvalue=1, from_=-10, to=10,
                  tickinterval=1)
-subvention.grid(row = 13, column = 2)
+subvention.grid(row = 16, column = 2)
 
-fen.mainloop()
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
+fen.columnconfigure(0, weight=1)
+fen.rowconfigure(0, weight=1)
+message.columnconfigure(0, weight=1)
+message.rowconfigure(0, weight=1)
+scale.columnconfigure(0, weight=1)
+scale.rowconfigure(0, weight=1)
+
+root.mainloop()
 
