@@ -117,7 +117,8 @@ root.title("Aide à la répartition des subventions")
 
 fen = ttk.Frame(root, padding=10)
 fen.grid(column=0, row=0, sticky=(E,W))
-message = ttk.Frame(root, padding=10)
+message = ttk.Frame(root, padding=10, borderwidth=2,
+                    relief="sunken", height=400)
 message.grid(column=0, row=12, sticky=(E,W))
 scale = ttk.Frame(root, padding=10)
 scale.grid(column=0, row=20, rowspan=3)
@@ -161,30 +162,50 @@ ttk.Label(message, textvariable=liste).grid(column=1, row=11, sticky=W)
 
 
 
-adherent = Scale(scale, length=250, orient=HORIZONTAL, label="Adhérents",
-                 sliderlength=20, showvalue=1, from_=-10,
-                 to=10, tickinterval=1)
-adherent.grid(row = 15)
-adhesion = Scale(scale, length=250, orient=HORIZONTAL, label="Adhésion",
-                 sliderlength=20, showvalue=1, from_=-10, to=10,
-                 tickinterval=1)
-adhesion.grid(row = 15, column = 1)
-tresorerie = Scale(scale, length=250, orient=HORIZONTAL, label="Trésorerie",
-                 sliderlength=20, showvalue=1, from_=-10, to=10,
-                 tickinterval=1)
-tresorerie.grid(row = 15, column = 2)
-salarie = Scale(scale, length=250, orient=HORIZONTAL, label="Salarié(es)",
-                 sliderlength=20, showvalue=1, from_=-10, to=10,
-                 tickinterval=1)
-salarie.grid(row = 16)
-salle = Scale(scale, length=250, orient=HORIZONTAL, label="Occupation de salle",
-                 sliderlength=20, showvalue=1, from_=-10, to=10,
-                 tickinterval=1)
-salle.grid(row = 16, column = 1)
-subvention = Scale(scale, length=250, orient=HORIZONTAL, label="Sub ext",
-                 sliderlength=20, showvalue=1, from_=-10, to=10,
-                 tickinterval=1)
-subvention.grid(row = 16, column = 2)
+#adherent = Scale(scale, length=250, orient=HORIZONTAL, label="Adhérents",
+#                 sliderlength=20, showvalue=1, from_=-10,
+#                 to=10, tickinterval=1)
+#adherent.grid(row = 15)
+#adhesion = Scale(scale, length=250, orient=HORIZONTAL, label="Adhésion",
+#                 sliderlength=20, showvalue=1, from_=-10, to=10,
+#                 tickinterval=1)
+#adhesion.grid(row = 15, column = 1)
+#tresorerie = Scale(scale, length=250, orient=HORIZONTAL, label="Trésorerie",
+#                 sliderlength=20, showvalue=1, from_=-10, to=10,
+#                 tickinterval=1)
+#tresorerie.grid(row = 15, column = 2)
+#salarie = Scale(scale, length=250, orient=HORIZONTAL, label="Salarié(es)",
+#                 sliderlength=20, showvalue=1, from_=-10, to=10,
+#                 tickinterval=1)
+#salarie.grid(row = 16)
+#salle = Scale(scale, length=250, orient=HORIZONTAL, label="Occupation de salle",
+#                 sliderlength=20, showvalue=1, from_=-10, to=10,
+#                 tickinterval=1)
+#salle.grid(row = 16, column = 1)
+#subvention = Scale(scale, length=250, orient=HORIZONTAL, label="Sub ext",
+#                 sliderlength=20, showvalue=1, from_=-10, to=10,
+#                 tickinterval=1)
+#subvention.grid(row = 16, column = 2)
+
+adherent = ttk.Scale(scale, length=250, orient=HORIZONTAL, from_=-10, to=10)
+adhesion = ttk.Scale(scale, length=250, orient=HORIZONTAL, from_=-10, to=10)
+tresorerie = ttk.Scale(scale, length=250, orient=HORIZONTAL, from_=-10, to=10)
+salarie = ttk.Scale(scale, length=250, orient=HORIZONTAL, from_=-10, to=10)
+salle = ttk.Scale(scale, length=250, orient=HORIZONTAL, from_=-10, to=10)
+subvention = ttk.Scale(scale, length=250, orient=HORIZONTAL, from_=-10, to=10)
+adherent.grid(row=16)
+adhesion.grid(row=16, column=1)
+tresorerie.grid(row=16, column=2)
+salarie.grid(row=18)
+salle.grid(row=18, column=1)
+subvention.grid(row=18, column=2)
+ttk.Label(scale, text="adhérents: ").grid(row=15, sticky=W)
+ttk.Label(scale, text="adhésion: ").grid(row=15, column=1, sticky=W)
+ttk.Label(scale, text="trésorerie: ").grid(row=15, column=2, sticky=W)
+ttk.Label(scale, text="salarié(es): ").grid(row=17, sticky=W)
+ttk.Label(scale, text="salles: ").grid(row=17, column=1, sticky=W)
+ttk.Label(scale, text="subventions ext: ").grid(row=17, column=2, sticky=W)
+
 
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
@@ -194,6 +215,8 @@ message.columnconfigure(0, weight=1)
 message.rowconfigure(0, weight=1)
 scale.columnconfigure(0, weight=1)
 scale.rowconfigure(0, weight=1)
+
+entr1.focus()
 
 root.mainloop()
 
