@@ -55,12 +55,27 @@ def listing():
         fichAssos = open("assos", 'rb')        
         listAssos = pickle.load(fichAssos)        
         fichAssos.close()
-        cont = ""
-        for asso in listAssos:            
-            cont += asso + ", " + str(listAssos[asso][0]) + " adhérents" + "\n" 
-        liste.set(cont)                
+        
+        fen = Toplevel(root)
+        fen.title("Liste")
+        colonne = ["Assos", "Adhérents", "Adhésion", "Trésorerie",
+                   "Salarié(es)", "Salles", "Sub ext", "Demande"]
+        num_col = 0
+        while num_col < len(colonne):
+            Label(fen, text=colonne[num_col]).grid(row=0, column=num_col)
+            num_col += 1
+        num_row = 1
+        for asso in listAssos:
+            num_col = 0
+            Label(fen, text=asso).grid(row=num_row, column=num_col, sticky=W)
+            for e in listAssos[asso]:
+                num_col += 1
+                Label(fen, text=str(e)).grid(row=num_row, column=num_col,
+                                             sticky=W)
+            num_row += 1
+        
     except:
-        liste.set("Fichier vide")
+        confirm.set("Fichier vide")
     
     
 def vidage():
@@ -125,29 +140,28 @@ def scale_update(event):
 
 root = Tk()
 root.title("Aide à la répartition des subventions")
+root.resizable(0,0)
 
 
 fen = Frame(root, padding=10)
 fen.grid(column=0, row=0, sticky=(E,W))
 message = Frame(root, padding=10, borderwidth=2, relief="sunken", height=400)
 message.grid(column=0, row=12, sticky=(E,W))
-scale = Frame(root, padding=10)
+scale = Labelframe(root, text="Réglage cœfficients", padding=10)
 scale.grid(column=0, row=20, rowspan=3)
 
 
 confirm = StringVar()
 liste = StringVar()
-
-
-Label(fen, text="Association: ").grid(row=0, sticky=W)
-Label(fen, text="Nombre d'adhérents: ").grid(row=1, sticky=W)
-Label(fen, text="Montant de l'adhésion: ").grid(row=2, sticky=W)
-Label(fen, text="Trésorerie: ").grid(row=3, sticky=W)
-Label(fen, text="Salarié(es): ").grid(row=4, sticky=W)
-Label(fen, text="Occupation des salles: ").grid(row=5, sticky=W)
-Label(fen, text="Subventions extérieures: ").grid(row=6, sticky=W)
-Label(fen, text="Montant de la demande: ").grid(row=7, sticky=W)
-Label(fen, text="Montant total à répartir").grid(row=9, sticky=W)
+nom_label = ["Association: ", "Nombre d'adhérents: ", "montant de l'adhésion: ",
+             "Trésorerie: ", "Salarié(es): ", "Occupation des salles: ",
+             "Subvention extérieures: ", "Montant de la demande: ",
+             "Montant total à répartir: "]
+num_row = 0
+for nom in nom_label:
+    Label(fen, text=nom).grid(row=num_row, sticky=W)
+    num_row += 1
+    
 entr1 = Entry(fen, width=30)
 entr2 = Entry(fen, width=30)
 entr3 = Entry(fen, width=30)
@@ -167,11 +181,12 @@ entr7.grid(row = 6, column = 1)
 entr8.grid(row = 7, column = 1)
 entr9.grid(row = 9, column = 1)
 Button(fen, text="Enregistrer", command=nouvelle_asso).grid(row=8, sticky=W)
-Button(fen, text="Nouveau", command=vidage, width=25).grid(row=8, column=1, padx=5)
+Button(fen, text="Nouveau", command=vidage, width=25).grid(row=8, column=1)
 Button(fen, text="Listing", command=listing).grid(row=8, column=2, sticky=E)
 Button(fen, text="Calcul", command=coef).grid(row=10, sticky=W)
 Label(message, textvariable=confirm).grid(column=0, row=11, sticky=W)
-Label(message, textvariable=liste).grid(column=1, row=11, sticky=W)
+Label(message, textvariable=liste).grid(column=3, row=11, sticky=E)
+
 
 adherent = Scale(scale, length=250, orient=HORIZONTAL, from_=-10, to=10)
 adhesion = Scale(scale, length=250, orient=HORIZONTAL, from_=-10, to=10)
@@ -209,10 +224,6 @@ fen.columnconfigure(0, weight=1)
 fen.columnconfigure(1, weight=1)
 fen.columnconfigure(2, weight=1)
 fen.rowconfigure(0, weight=1)
-# message.columnconfigure(0, weight=1)
-# message.rowconfigure(0, weight=1)
-# scale.columnconfigure(0, weight=1)
-# scale.rowconfigure(0, weight=1)
 
 entr1.focus()
 
