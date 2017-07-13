@@ -19,14 +19,15 @@ def nouvelle_asso():
     occupation de locaux (loc), subventions extérieures (sub),
     montant de la demande (dem)
     """
-    nom = (entr1.get()).lower()
-    nbadh = int(entr2.get())
-    adh = float(entr3.get())
-    tres = float(entr4.get())
-    sal = int(entr5.get())
-    loc = int(entr6.get())
-    sub = float(entr7.get())
-    dem = float(entr8.get())
+    nom = (entrees[0][1].get()).lower()
+    nbadh = int(entrees[1][1].get())
+    adh = float(entrees[2][1].get())
+    tres = float(entrees[3][1].get())
+    sal = int(entrees[4][1].get())
+    loc = int(entrees[5][1].get())
+    sub = float(entrees[6][1].get())
+    dem = float(entrees[7][1].get())
+    
     try:
         fichAssos = open("assos", 'rb')
         listAssos = pickle.load(fichAssos)
@@ -62,7 +63,8 @@ def listing():
                    "Salarié(es)", "Salles", "Sub ext", "Demande"]
         num_col = 0
         while num_col < len(colonne):
-            Label(fen, text=colonne[num_col]).grid(row=0, column=num_col)
+            Label(fen, text=colonne[num_col], width=10).grid(row=0,
+                                                             column=num_col)
             num_col += 1
         num_row = 1
         for asso in listAssos:
@@ -82,15 +84,8 @@ def vidage():
     """
     Vide les champs du formulaire.
     """
-    entr1.delete(0, END)
-    entr2.delete(0, END)
-    entr3.delete(0, END)
-    entr4.delete(0, END)
-    entr5.delete(0, END)
-    entr6.delete(0, END)
-    entr7.delete(0, END)
-    entr8.delete(0, END)
-    entr9.delete(0, END)
+    for ent in entrees:
+        ent[1].delete(0, END)
         
 def coef():
     """ 
@@ -99,12 +94,23 @@ def coef():
     try:
         fichAssos = open("assos", 'rb')
         listAssos = pickle.load(fichAssos)
-        fichAssos.close()        
+        fichAssos.close()
+
+        
         dic = {}
         total = 0
         cont = ""        
         try:
-            sub = float(entr9.get())            
+            sub = float(entrees[8][1].get())            
+            fen = Toplevel(root)
+            fen.title("Répartition")
+            colonne = ["Assos", "Pourcentage", "Montant"]
+            num_col = 0
+            while num_col < len(colonne):
+                Label(fen, text=colonne[num_col], width=12).grid(row=0,
+                                                                 column=num_col)
+                num_col += 1
+                
             for asso, val in listAssos.items():                
                 dic[asso] = (val[0]*adherent.get()
                 + val[1]*adhesion.get()
@@ -113,14 +119,25 @@ def coef():
                 - val[4]*salle.get()
                 -val[5]*subvention.get()
                 + val[6])                
-                total += dic[asso]                
+                total += dic[asso]
+            num_row = 1
+            num_col = 0
             for k in dic:                
                 pourcent = dic[k]/(total/100)                
-                assob = sub/100*pourcent                
-                cont += (k+" "+str(round(pourcent, 2))+"% = "
-                +str(round(assob, 2))+"€\n")                
-            liste.set(cont)            
-            confirm.set("Résultat: ")            
+                assob = sub/100*pourcent
+                num_col = 0
+                Label(fen, text=k).grid(row=num_row, column=num_col, sticky=W)
+                Label(fen, text=str(round(pourcent,2))+"%  ").grid(row=num_row,
+                                                             column=num_col+1,
+                                                             sticky=E)
+                Label(fen, text=str(round(assob,2))+"€  ").grid(row=num_row,
+                                                          column=num_col+2,
+                                                          sticky=E)
+                num_row += 1
+                #cont += (k+" "+str(round(pourcent, 2))+"% = "
+                #+str(round(assob, 2))+"€\n")                
+            #liste.set(cont)            
+            #confirm.set("Résultat: ")            
         except:
             confirm.set("Entrez une somme à répartir")
     except:
@@ -158,35 +175,22 @@ nom_label = ["Association: ", "Nombre d'adhérents: ", "montant de l'adhésion: 
              "Subvention extérieures: ", "Montant de la demande: ",
              "Montant total à répartir: "]
 num_row = 0
+entrees = []
 for nom in nom_label:
+    if num_row == 8:
+        num_row = 9
     Label(fen, text=nom).grid(row=num_row, sticky=W)
+    ent = Entry(fen, width=30)
+    ent.grid(row=num_row, column=1)
+    entrees.append((nom, ent))
     num_row += 1
-    
-entr1 = Entry(fen, width=30)
-entr2 = Entry(fen, width=30)
-entr3 = Entry(fen, width=30)
-entr4 = Entry(fen, width=30)
-entr5 = Entry(fen, width=30)
-entr6 = Entry(fen, width=30)
-entr7 = Entry(fen, width=30)
-entr8 = Entry(fen, width=30)
-entr9 = Entry(fen, width=30)
-entr1.grid(row = 0, column = 1)
-entr2.grid(row = 1, column = 1)
-entr3.grid(row = 2, column = 1)
-entr4.grid(row = 3, column = 1)
-entr5.grid(row = 4, column = 1)
-entr6.grid(row = 5, column = 1)
-entr7.grid(row = 6, column = 1)
-entr8.grid(row = 7, column = 1)
-entr9.grid(row = 9, column = 1)
+
 Button(fen, text="Enregistrer", command=nouvelle_asso).grid(row=8, sticky=W)
 Button(fen, text="Nouveau", command=vidage, width=25).grid(row=8, column=1)
 Button(fen, text="Listing", command=listing).grid(row=8, column=2, sticky=E)
 Button(fen, text="Calcul", command=coef).grid(row=10, sticky=W)
 Label(message, textvariable=confirm).grid(column=0, row=11, sticky=W)
 Label(message, textvariable=liste).grid(column=3, row=11, sticky=E)
-
 
 adherent = Scale(scale, length=250, orient=HORIZONTAL, from_=-10, to=10)
 adhesion = Scale(scale, length=250, orient=HORIZONTAL, from_=-10, to=10)
@@ -218,14 +222,11 @@ Label(scale, textvariable=val_subvention).grid(row=17, column=2, sticky=W)
 root.bind('<B1-Motion>', scale_update)
 scale_val()
 
-root.columnconfigure(0, weight=1)
-root.rowconfigure(0, weight=1)
 fen.columnconfigure(0, weight=1)
 fen.columnconfigure(1, weight=1)
 fen.columnconfigure(2, weight=1)
-fen.rowconfigure(0, weight=1)
 
-entr1.focus()
+entrees[0][1].focus()
 
 root.mainloop()
 
