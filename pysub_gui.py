@@ -30,21 +30,21 @@ def nouvelle_asso():
     
     try:
         fichAssos = open("assos", 'rb')
-        listAssos = pickle.load(fichAssos)
+        dicAssos = pickle.load(fichAssos)
         fichAssos.close()
-        if nom in listAssos:
+        if nom in dicAssos:
             confirm.set("L'association " + nom + " est déjà enregistrée")       
         else:
-            listAssos[nom] = [nbadh, adh, tres, sal, loc, sub, dem]
+            dicAssos[nom] = [nbadh, adh, tres, sal, loc, sub, dem]
             fichAssos = open("assos", 'wb')
-            pickle.dump(listAssos, fichAssos)
+            pickle.dump(dicAssos, fichAssos)
             fichAssos.close()
             confirm.set("L'association " + nom + " est bien enregistrée")       
     except:
-        listAssos = {}
+        dicAssos = {}
         fichAssos = open("assos", 'wb')
-        listAssos[nom] = [nbadh, adh, tres, sal, loc, sub, dem]
-        pickle.dump(listAssos, fichAssos)
+        dicAssos[nom] = [nbadh, adh, tres, sal, loc, sub, dem]
+        pickle.dump(dicAssos, fichAssos)
         fichAssos.close()
         confirm.set("L'association " + nom + " est bien enregistrée")
         
@@ -54,8 +54,10 @@ def listing():
     """
     try:
         fichAssos = open("assos", 'rb')        
-        listAssos = pickle.load(fichAssos)        
+        dicAssos = pickle.load(fichAssos)        
         fichAssos.close()
+        listAssos = [asso for asso in dicAssos]
+        listAssos.sort()
         
         fen = Toplevel(root)
         fen.title("Liste")
@@ -70,7 +72,7 @@ def listing():
         for asso in listAssos:
             num_col = 0
             Label(fen, text=asso).grid(row=num_row, column=num_col, sticky=W)
-            for e in listAssos[asso]:
+            for e in dicAssos[asso]:
                 num_col += 1
                 Label(fen, text=str(e)).grid(row=num_row, column=num_col,
                                              sticky=W)
@@ -93,9 +95,10 @@ def coef():
     """
     try:
         fichAssos = open("assos", 'rb')
-        listAssos = pickle.load(fichAssos)
+        dicAssos = pickle.load(fichAssos)
         fichAssos.close()
-
+        listAssos = [asso for asso in dicAssos]
+        listAssos.sort()
         
         dic = {}
         total = 0
@@ -111,7 +114,7 @@ def coef():
                                                                  column=num_col)
                 num_col += 1
                 
-            for asso, val in listAssos.items():                
+            for asso, val in dicAssos.items():                
                 dic[asso] = (val[0]*adherent.get()
                 + val[1]*adhesion.get()
                 + val[2]*tresorerie.get()
@@ -122,22 +125,17 @@ def coef():
                 total += dic[asso]
             num_row = 1
             num_col = 0
-            for k in dic:                
-                pourcent = dic[k]/(total/100)                
+            for asso in listAssos:                
+                pourcent = dic[asso]/(total/100)                
                 assob = sub/100*pourcent
                 num_col = 0
-                Label(fen, text=k).grid(row=num_row, column=num_col, sticky=W)
+                Label(fen, text=asso).grid(row=num_row, column=num_col,
+                                           sticky=W)
                 Label(fen, text=str(round(pourcent,2))+"%  ").grid(row=num_row,
-                                                             column=num_col+1,
-                                                             sticky=E)
+                                           column=num_col+1, sticky=E)
                 Label(fen, text=str(round(assob,2))+"€  ").grid(row=num_row,
-                                                          column=num_col+2,
-                                                          sticky=E)
+                                           column=num_col+2, sticky=E)
                 num_row += 1
-                #cont += (k+" "+str(round(pourcent, 2))+"% = "
-                #+str(round(assob, 2))+"€\n")                
-            #liste.set(cont)            
-            #confirm.set("Résultat: ")            
         except:
             confirm.set("Entrez une somme à répartir")
     except:
@@ -154,6 +152,9 @@ def scale_val():
 def scale_update(event):
     scale_val()
 
+def return_action(event):
+    if entrees[8][1].get() != "":
+        coef()
 
 root = Tk()
 root.title("Aide à la répartition des subventions")
@@ -169,7 +170,6 @@ scale.grid(column=0, row=20, rowspan=3)
 
 
 confirm = StringVar()
-liste = StringVar()
 nom_label = ["Association: ", "Nombre d'adhérents: ", "montant de l'adhésion: ",
              "Trésorerie: ", "Salarié(es): ", "Occupation des salles: ",
              "Subvention extérieures: ", "Montant de la demande: ",
@@ -190,7 +190,6 @@ Button(fen, text="Nouveau", command=vidage, width=25).grid(row=8, column=1)
 Button(fen, text="Listing", command=listing).grid(row=8, column=2, sticky=E)
 Button(fen, text="Calcul", command=coef).grid(row=10, sticky=W)
 Label(message, textvariable=confirm).grid(column=0, row=11, sticky=W)
-Label(message, textvariable=liste).grid(column=3, row=11, sticky=E)
 
 adherent = Scale(scale, length=250, orient=HORIZONTAL, from_=-10, to=10)
 adhesion = Scale(scale, length=250, orient=HORIZONTAL, from_=-10, to=10)
@@ -219,6 +218,7 @@ Label(scale, textvariable=val_salarie).grid(row=17, sticky=W)
 Label(scale, textvariable=val_salle).grid(row=17, column=1, sticky=W)
 Label(scale, textvariable=val_subvention).grid(row=17, column=2, sticky=W)
 
+root.bind('<Return>', return_action)
 root.bind('<B1-Motion>', scale_update)
 scale_val()
 
