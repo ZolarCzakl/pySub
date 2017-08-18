@@ -9,6 +9,19 @@ from tkinter import *
 from tkinter.ttk import *
 import pickle
 
+def check_entry(string):
+    """
+    Remplace les virgules par des points
+    retourne une chaîne de carartères.
+    """
+    if "," in string:
+        ent, dec = string.split(',')
+        return float(ent + '.' + dec)
+    elif "." in string:
+        return float(string)
+    else:
+        return int(string)
+
 
 def nouvelle_asso():
     """
@@ -20,13 +33,13 @@ def nouvelle_asso():
     montant de la demande (dem)
     """
     nom = (entrees[0][1].get()).lower()
-    nbadh = int(entrees[1][1].get())
-    adh = float(entrees[2][1].get())
-    tres = float(entrees[3][1].get())
-    sal = int(entrees[4][1].get())
-    loc = int(entrees[5][1].get())
-    sub = float(entrees[6][1].get())
-    dem = float(entrees[7][1].get())
+    nbadh = check_entry(entrees[1][1].get())
+    adh = check_entry(entrees[2][1].get())
+    tres = check_entry(entrees[3][1].get())
+    sal = check_entry(entrees[4][1].get())
+    loc = check_entry(entrees[5][1].get())
+    sub = check_entry(entrees[6][1].get())
+    dem = check_entry(entrees[7][1].get())
     
     try:
         fichAssos = open("assos", 'rb')
